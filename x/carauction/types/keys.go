@@ -13,8 +13,10 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_carauction"
 
-	AuctionKey      = "Auction/value/"
+	AuctionKey      = "Auction/value"
 	AuctionCountKey = "Auction/count/"
+	BidKey          = "Bid/value"
+	BidCountKey     = "Bid/count/"
 )
 
 func KeyPrefix(p string) []byte {

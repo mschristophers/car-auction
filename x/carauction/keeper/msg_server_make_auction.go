@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"car-auction/x/carauction/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -14,10 +15,10 @@ func (k msgServer) MakeAuction(goCtx context.Context, msg *types.MsgMakeAuction)
 	auction := types.Auction{
 		Creator:      msg.Creator,
 		InitialPrice: msg.InitialPrice,
-		MinIncrment:  msg.MinIncrment,
+		MinIncrement: msg.MinIncrement,
 	}
 
-	id := k.AppendAuction(ctx, Auction)
+	id := k.AppendAuction(ctx, auction)
 
-	return &types.MsgMakeAuctionResponse{}, nil
+	return &types.MsgMakeAuctionResponse{Id: id}, nil
 }

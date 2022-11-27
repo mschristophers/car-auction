@@ -1,9 +1,11 @@
 import { Client, registry, MissingWalletError } from 'car-auction-client-ts'
 
+import { Auction } from "car-auction-client-ts/carauction.carauction/types"
+import { Bid } from "car-auction-client-ts/carauction.carauction/types"
 import { Params } from "car-auction-client-ts/carauction.carauction/types"
 
 
-export { Params };
+export { Auction, Bid, Params };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -34,9 +36,10 @@ function getStructure(template) {
 }
 const getDefaultState = () => {
 	return {
-				Params: {},
 				
 				_Structure: {
+						Auction: getStructure(Auction.fromPartial({})),
+						Bid: getStructure(Bid.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						
 		},
@@ -66,12 +69,6 @@ export default {
 		}
 	},
 	getters: {
-				getParams: (state) => (params = { params: {}}) => {
-					if (!(<any> params).query) {
-						(<any> params).query=null
-					}
-			return state.Params[JSON.stringify(params)] ?? {}
-		},
 				
 		getTypeStructure: (state) => (type) => {
 			return state._Structure[type].fields
@@ -106,41 +103,6 @@ export default {
 			})
 		},
 		
-		
-		
-		 		
-		
-		
-		async QueryParams({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
-			try {
-				const key = params ?? {};
-				const client = initClient(rootGetters);
-				let value= (await client.CarauctionCarauction.query.queryParams()).data
-				
-					
-				commit('QUERY', { query: 'Params', key: { params: {...key}, query}, value })
-				if (subscribe) commit('SUBSCRIBE', { action: 'QueryParams', payload: { options: { all }, params: {...key},query }})
-				return getters['getParams']( { params: {...key}, query}) ?? {}
-			} catch (e) {
-				throw new Error('QueryClient:QueryParams API Node Unavailable. Could not perform query: ' + e.message)
-				
-			}
-		},
-		
-		
-		async sendMsgAddBid({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.CarauctionCarauction.tx.sendMsgAddBid({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgAddBid:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgMakeAuction({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -154,20 +116,20 @@ export default {
 				}
 			}
 		},
-		
-		async MsgAddBid({ rootGetters }, { value }) {
+		async sendMsgAddBid({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.CarauctionCarauction.tx.msgAddBid({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.CarauctionCarauction.tx.sendMsgAddBid({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgAddBid:Create Could not create message: ' + e.message)
+				}else{
+					throw new Error('TxClient:MsgAddBid:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
+		
 		async MsgMakeAuction({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -178,6 +140,19 @@ export default {
 					throw new Error('TxClient:MsgMakeAuction:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgMakeAuction:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAddBid({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.CarauctionCarauction.tx.msgAddBid({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAddBid:Create Could not create message: ' + e.message)
 				}
 			}
 		},

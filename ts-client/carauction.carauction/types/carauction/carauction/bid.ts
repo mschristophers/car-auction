@@ -4,42 +4,38 @@ import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "carauction.carauction";
 
-export interface Auction {
+export interface Bid {
   creator: string;
   id: number;
-  name: string;
-  initialPrice: number;
-  minIncrement: number;
+  auctionID: number;
+  bidPrice: number;
 }
 
-function createBaseAuction(): Auction {
-  return { creator: "", id: 0, name: "", initialPrice: 0, minIncrement: 0 };
+function createBaseBid(): Bid {
+  return { creator: "", id: 0, auctionID: 0, bidPrice: 0 };
 }
 
-export const Auction = {
-  encode(message: Auction, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const Bid = {
+  encode(message: Bid, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
     if (message.id !== 0) {
       writer.uint32(16).uint64(message.id);
     }
-    if (message.name !== "") {
-      writer.uint32(26).string(message.name);
+    if (message.auctionID !== 0) {
+      writer.uint32(24).uint64(message.auctionID);
     }
-    if (message.initialPrice !== 0) {
-      writer.uint32(32).uint64(message.initialPrice);
-    }
-    if (message.minIncrement !== 0) {
-      writer.uint32(40).uint64(message.minIncrement);
+    if (message.bidPrice !== 0) {
+      writer.uint32(32).uint64(message.bidPrice);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): Auction {
+  decode(input: _m0.Reader | Uint8Array, length?: number): Bid {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseAuction();
+    const message = createBaseBid();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -50,13 +46,10 @@ export const Auction = {
           message.id = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.name = reader.string();
+          message.auctionID = longToNumber(reader.uint64() as Long);
           break;
         case 4:
-          message.initialPrice = longToNumber(reader.uint64() as Long);
-          break;
-        case 5:
-          message.minIncrement = longToNumber(reader.uint64() as Long);
+          message.bidPrice = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -66,33 +59,30 @@ export const Auction = {
     return message;
   },
 
-  fromJSON(object: any): Auction {
+  fromJSON(object: any): Bid {
     return {
       creator: isSet(object.creator) ? String(object.creator) : "",
       id: isSet(object.id) ? Number(object.id) : 0,
-      name: isSet(object.name) ? String(object.name) : "",
-      initialPrice: isSet(object.initialPrice) ? Number(object.initialPrice) : 0,
-      minIncrement: isSet(object.minIncrement) ? Number(object.minIncrement) : 0,
+      auctionID: isSet(object.auctionID) ? Number(object.auctionID) : 0,
+      bidPrice: isSet(object.bidPrice) ? Number(object.bidPrice) : 0,
     };
   },
 
-  toJSON(message: Auction): unknown {
+  toJSON(message: Bid): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = Math.round(message.id));
-    message.name !== undefined && (obj.name = message.name);
-    message.initialPrice !== undefined && (obj.initialPrice = Math.round(message.initialPrice));
-    message.minIncrement !== undefined && (obj.minIncrement = Math.round(message.minIncrement));
+    message.auctionID !== undefined && (obj.auctionID = Math.round(message.auctionID));
+    message.bidPrice !== undefined && (obj.bidPrice = Math.round(message.bidPrice));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Auction>, I>>(object: I): Auction {
-    const message = createBaseAuction();
+  fromPartial<I extends Exact<DeepPartial<Bid>, I>>(object: I): Bid {
+    const message = createBaseBid();
     message.creator = object.creator ?? "";
     message.id = object.id ?? 0;
-    message.name = object.name ?? "";
-    message.initialPrice = object.initialPrice ?? 0;
-    message.minIncrement = object.minIncrement ?? 0;
+    message.auctionID = object.auctionID ?? 0;
+    message.bidPrice = object.bidPrice ?? 0;
     return message;
   },
 };

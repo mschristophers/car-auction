@@ -22,6 +22,7 @@ export interface MsgAddBid {
 }
 
 export interface MsgAddBidResponse {
+  id: number;
 }
 
 function createBaseMsgMakeAuction(): MsgMakeAuction {
@@ -215,11 +216,14 @@ export const MsgAddBid = {
 };
 
 function createBaseMsgAddBidResponse(): MsgAddBidResponse {
-  return {};
+  return { id: 0 };
 }
 
 export const MsgAddBidResponse = {
-  encode(_: MsgAddBidResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(message: MsgAddBidResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
     return writer;
   },
 
@@ -230,6 +234,9 @@ export const MsgAddBidResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -238,17 +245,19 @@ export const MsgAddBidResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgAddBidResponse {
-    return {};
+  fromJSON(object: any): MsgAddBidResponse {
+    return { id: isSet(object.id) ? Number(object.id) : 0 };
   },
 
-  toJSON(_: MsgAddBidResponse): unknown {
+  toJSON(message: MsgAddBidResponse): unknown {
     const obj: any = {};
+    message.id !== undefined && (obj.id = Math.round(message.id));
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgAddBidResponse>, I>>(_: I): MsgAddBidResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgAddBidResponse>, I>>(object: I): MsgAddBidResponse {
     const message = createBaseMsgAddBidResponse();
+    message.id = object.id ?? 0;
     return message;
   },
 };
