@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package carauction.carauction;
+
+option go_package = "car-auction/x/carauction/types";
+
+message Auction {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  uint64 initialPrice = 4;
+  uint64 minIncrement = 5;
+}

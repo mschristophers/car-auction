@@ -161,7 +161,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title carauction/carauction/genesis.proto
+ * @title carauction/carauction/auction.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {

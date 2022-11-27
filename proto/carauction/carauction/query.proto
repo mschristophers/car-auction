@@ -15,7 +15,27 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/car-auction/carauction/params";
   }
-  // this line is used by starport scaffolding # 2
+  // Queries a list of Sellers items.
+	rpc Sellers(QuerySellersRequest) returns (QuerySellersResponse) {
+		option (google.api.http).get = "/car-auction/carauction/sellers/{initialPrice}/{minIncrement}";
+	}
+
+// Queries a list of Auctions items.
+	rpc Auctions(QueryAuctionsRequest) returns (QueryAuctionsResponse) {
+		option (google.api.http).get = "/car-auction/carauction/auctions/{initialPrice}/{minIncrement}";
+	}
+
+// Queries a list of Auctions items.
+	rpc Auctions(QueryAuctionsRequest) returns (QueryAuctionsResponse) {
+		option (google.api.http).get = "/car-auction/carauction/auctions/{initialPrice}/{minIncrement}";
+	}
+
+// Queries a list of Auctions items.
+	rpc Auctions(QueryAuctionsRequest) returns (QueryAuctionsResponse) {
+		option (google.api.http).get = "/car-auction/carauction/auctions/{initialPrice}/{minIncrement}";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -25,6 +45,42 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QuerySellersRequest {
+  string initialPrice = 1;
+  string minIncrement = 2;
+}
+
+message QuerySellersResponse {
+  string name = 1;
+}
+
+message QueryAuctionsRequest {
+  string initialPrice = 1;
+  string minIncrement = 2;
+}
+
+message QueryAuctionsResponse {
+  string name = 1;
+}
+
+message QueryAuctionsRequest {
+  string initialPrice = 1;
+  string minIncrement = 2;
+}
+
+message QueryAuctionsResponse {
+  string name = 1;
+}
+
+message QueryAuctionsRequest {
+  string initialPrice = 1;
+  string minIncrement = 2;
+}
+
+message QueryAuctionsResponse {
+  string name = 1;
 }
 
 // this line is used by starport scaffolding # 3
