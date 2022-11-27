@@ -36,6 +36,8 @@ function getStructure(template) {
 }
 const getDefaultState = () => {
 	return {
+				Params: {},
+				Auctions: {},
 				
 				_Structure: {
 						Auction: getStructure(Auction.fromPartial({})),
@@ -69,6 +71,18 @@ export default {
 		}
 	},
 	getters: {
+				getParams: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Params[JSON.stringify(params)] ?? {}
+		},
+				getAuctions: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Auctions[JSON.stringify(params)] ?? {}
+		},
 				
 		getTypeStructure: (state) => (type) => {
 			return state._Structure[type].fields
@@ -102,6 +116,50 @@ export default {
 				}
 			})
 		},
+		
+		
+		
+		 		
+		
+		
+		async QueryParams({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.CarauctionCarauction.query.queryParams()).data
+				
+					
+				commit('QUERY', { query: 'Params', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryParams', payload: { options: { all }, params: {...key},query }})
+				return getters['getParams']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryParams API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryAuctions({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.CarauctionCarauction.query.queryAuctions()).data
+				
+					
+				commit('QUERY', { query: 'Auctions', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryAuctions', payload: { options: { all }, params: {...key},query }})
+				return getters['getAuctions']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryAuctions API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
 		
 		async sendMsgMakeAuction({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {

@@ -19,6 +19,30 @@ export interface CarauctionMsgMakeAuctionResponse {
   id?: string;
 }
 
+/**
+ * Params defines the parameters for the module.
+ */
+export type CarauctionParams = object;
+
+export interface CarauctionQueryAuctionsResponse {
+  name?: string;
+
+  /** @format uint64 */
+  initialPrice?: string;
+
+  /** @format uint64 */
+  minIncrement?: string;
+  ended?: boolean;
+}
+
+/**
+ * QueryParamsResponse is response type for the Query/Params RPC method.
+ */
+export interface CarauctionQueryParamsResponse {
+  /** params holds all the parameters of this module. */
+  params?: CarauctionParams;
+}
+
 export interface ProtobufAny {
   "@type"?: string;
 }
@@ -154,4 +178,36 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title carauction/carauction/auction.proto
  * @version version not set
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {}
+export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryAuctions
+   * @summary Queries a list of Auctions items.
+   * @request GET:/carauction/carauction/auctions
+   */
+  queryAuctions = (params: RequestParams = {}) =>
+    this.request<CarauctionQueryAuctionsResponse, RpcStatus>({
+      path: `/carauction/carauction/auctions`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryParams
+   * @summary Parameters queries the parameters of the module.
+   * @request GET:/carauction/carauction/params
+   */
+  queryParams = (params: RequestParams = {}) =>
+    this.request<CarauctionQueryParamsResponse, RpcStatus>({
+      path: `/carauction/carauction/params`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+}

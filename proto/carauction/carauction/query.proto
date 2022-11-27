@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package carauction.carauction;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "carauction/carauction/params.proto";
+
+option go_package = "car-auction/x/carauction/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/carauction/carauction/params";
+  }
+  // Queries a list of Auctions items.
+	rpc Auctions(QueryAuctionsRequest) returns (QueryAuctionsResponse) {
+		option (google.api.http).get = "/carauction/carauction/auctions";
+	}
+
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAuctionsRequest {
+}
+
+message QueryAuctionsResponse {
+  string name = 1;
+  uint64 initialPrice = 2;
+  uint64 minIncrement = 3;
+  bool ended = 4;
+}
