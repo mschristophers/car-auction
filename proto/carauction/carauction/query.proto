@@ -6,6 +6,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "carauction/carauction/params.proto";
+import "carauction/carauction/auction.proto";
 
 option go_package = "car-auction/x/carauction/types";
 
@@ -32,11 +33,10 @@ message QueryParamsResponse {
 }
 
 message QueryAuctionsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
 message QueryAuctionsResponse {
-  string name = 1;
-  uint64 initialPrice = 2;
-  uint64 minIncrement = 3;
-  bool ended = 4;
+  repeated Auction Auction = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

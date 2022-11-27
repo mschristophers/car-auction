@@ -148,9 +148,13 @@ export default {
 			try {
 				const key = params ?? {};
 				const client = initClient(rootGetters);
-				let value= (await client.CarauctionCarauction.query.queryAuctions()).data
+				let value= (await client.CarauctionCarauction.query.queryAuctions(query ?? undefined)).data
 				
 					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.CarauctionCarauction.query.queryAuctions({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
 				commit('QUERY', { query: 'Auctions', key: { params: {...key}, query}, value })
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryAuctions', payload: { options: { all }, params: {...key},query }})
 				return getters['getAuctions']( { params: {...key}, query}) ?? {}
