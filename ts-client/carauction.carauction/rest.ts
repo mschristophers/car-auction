@@ -29,6 +29,8 @@ export interface CarauctionMsgAddBidResponse {
   id?: string;
 }
 
+export type CarauctionMsgEndAuctionResponse = object;
+
 export interface CarauctionMsgMakeAuctionResponse {
   /** @format uint64 */
   id?: string;

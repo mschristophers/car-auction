@@ -44878,6 +44878,8 @@ definitions:
       id:
         type: string
         format: uint64
+  carauction.carauction.MsgEndAuctionResponse:
+    type: object
   carauction.carauction.MsgMakeAuctionResponse:
     type: object
     properties:
