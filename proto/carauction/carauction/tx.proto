@@ -7,7 +7,19 @@ option go_package = "car-auction/x/carauction/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc MakeAuction(MsgMakeAuction) returns (MsgMakeAuctionResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgMakeAuction {
+  string creator = 1;
+  string name = 2;
+  uint64 initialPrice = 3;
+  uint64 minIncrement = 4;
+}
+
+message MsgMakeAuctionResponse {
+  uint64 id = 1;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

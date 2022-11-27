@@ -44719,6 +44719,12 @@ paths:
       tags:
         - Query
 definitions:
+  carauction.carauction.MsgMakeAuctionResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
   carauction.carauction.Params:
     type: object
     description: Params defines the parameters for the module.
