@@ -18,7 +18,9 @@ func (k msgServer) AddBid(goCtx context.Context, msg *types.MsgAddBid) (*types.M
 		BidPrice:  msg.BidPrice,
 	}
 
-	id := k.AppendBid(ctx, bid)
-
-	return &types.MsgAddBidResponse{Id: id}, nil
+	if id, err := k.AppendBid(ctx, bid); err != nil {
+		return nil, err
+	} else {
+		return &types.MsgAddBidResponse{Id: id}, nil
+	}
 }

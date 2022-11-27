@@ -21,9 +21,7 @@ func (k Keeper) Auctions(goCtx context.Context, req *types.QueryAuctionsRequest)
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	store := ctx.KVStore(k.storeKey)
-
-	auctionStore := prefix.NewStore(store, []byte(types.AuctionKey))
+	auctionStore := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.AuctionKey))
 
 	pageRes, err := query.Paginate(
 		auctionStore,

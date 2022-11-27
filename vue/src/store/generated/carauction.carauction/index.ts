@@ -165,19 +165,6 @@ export default {
 		},
 		
 		
-		async sendMsgMakeAuction({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.CarauctionCarauction.tx.sendMsgMakeAuction({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMakeAuction:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgMakeAuction:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgAddBid({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -191,20 +178,20 @@ export default {
 				}
 			}
 		},
-		
-		async MsgMakeAuction({ rootGetters }, { value }) {
+		async sendMsgMakeAuction({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.CarauctionCarauction.tx.msgMakeAuction({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.CarauctionCarauction.tx.sendMsgMakeAuction({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgMakeAuction:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgMakeAuction:Create Could not create message: ' + e.message)
+				}else{
+					throw new Error('TxClient:MsgMakeAuction:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
+		
 		async MsgAddBid({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -215,6 +202,19 @@ export default {
 					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgAddBid:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgMakeAuction({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.CarauctionCarauction.tx.msgMakeAuction({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgMakeAuction:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgMakeAuction:Create Could not create message: ' + e.message)
 				}
 			}
 		},
