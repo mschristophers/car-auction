@@ -44719,6 +44719,8 @@ paths:
       tags:
         - Query
 definitions:
+  carauction.carauction.MsgAddBidResponse:
+    type: object
   carauction.carauction.MsgMakeAuctionResponse:
     type: object
     properties:

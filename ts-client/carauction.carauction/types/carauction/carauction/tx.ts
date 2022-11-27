@@ -15,6 +15,15 @@ export interface MsgMakeAuctionResponse {
   id: number;
 }
 
+export interface MsgAddBid {
+  creator: string;
+  auctionID: number;
+  bidPrice: number;
+}
+
+export interface MsgAddBidResponse {
+}
+
 function createBaseMsgMakeAuction(): MsgMakeAuction {
   return { creator: "", name: "", initialPrice: 0, minIncrement: 0 };
 }
@@ -138,10 +147,117 @@ export const MsgMakeAuctionResponse = {
   },
 };
 
+function createBaseMsgAddBid(): MsgAddBid {
+  return { creator: "", auctionID: 0, bidPrice: 0 };
+}
+
+export const MsgAddBid = {
+  encode(message: MsgAddBid, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.auctionID !== 0) {
+      writer.uint32(16).uint64(message.auctionID);
+    }
+    if (message.bidPrice !== 0) {
+      writer.uint32(24).uint64(message.bidPrice);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAddBid {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAddBid();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.auctionID = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.bidPrice = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAddBid {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      auctionID: isSet(object.auctionID) ? Number(object.auctionID) : 0,
+      bidPrice: isSet(object.bidPrice) ? Number(object.bidPrice) : 0,
+    };
+  },
+
+  toJSON(message: MsgAddBid): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.auctionID !== undefined && (obj.auctionID = Math.round(message.auctionID));
+    message.bidPrice !== undefined && (obj.bidPrice = Math.round(message.bidPrice));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddBid>, I>>(object: I): MsgAddBid {
+    const message = createBaseMsgAddBid();
+    message.creator = object.creator ?? "";
+    message.auctionID = object.auctionID ?? 0;
+    message.bidPrice = object.bidPrice ?? 0;
+    return message;
+  },
+};
+
+function createBaseMsgAddBidResponse(): MsgAddBidResponse {
+  return {};
+}
+
+export const MsgAddBidResponse = {
+  encode(_: MsgAddBidResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAddBidResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAddBidResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgAddBidResponse {
+    return {};
+  },
+
+  toJSON(_: MsgAddBidResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddBidResponse>, I>>(_: I): MsgAddBidResponse {
+    const message = createBaseMsgAddBidResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   MakeAuction(request: MsgMakeAuction): Promise<MsgMakeAuctionResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  AddBid(request: MsgAddBid): Promise<MsgAddBidResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -149,11 +265,18 @@ export class MsgClientImpl implements Msg {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.MakeAuction = this.MakeAuction.bind(this);
+    this.AddBid = this.AddBid.bind(this);
   }
   MakeAuction(request: MsgMakeAuction): Promise<MsgMakeAuctionResponse> {
     const data = MsgMakeAuction.encode(request).finish();
     const promise = this.rpc.request("carauction.carauction.Msg", "MakeAuction", data);
     return promise.then((data) => MsgMakeAuctionResponse.decode(new _m0.Reader(data)));
+  }
+
+  AddBid(request: MsgAddBid): Promise<MsgAddBidResponse> {
+    const data = MsgAddBid.encode(request).finish();
+    const promise = this.rpc.request("carauction.carauction.Msg", "AddBid", data);
+    return promise.then((data) => MsgAddBidResponse.decode(new _m0.Reader(data)));
   }
 }
 
