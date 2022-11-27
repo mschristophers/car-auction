@@ -45,6 +45,7 @@ func (k Keeper) AppendAuction(ctx sdk.Context, auction types.Auction) uint64 {
 	count := k.GetAuctionCount(ctx)
 
 	auction.Id = count
+	auction.Ended = false
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.AuctionKey))
 

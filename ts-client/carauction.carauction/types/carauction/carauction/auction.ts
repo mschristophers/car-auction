@@ -10,10 +10,11 @@ export interface Auction {
   name: string;
   initialPrice: number;
   minIncrement: number;
+  ended: boolean;
 }
 
 function createBaseAuction(): Auction {
-  return { creator: "", id: 0, name: "", initialPrice: 0, minIncrement: 0 };
+  return { creator: "", id: 0, name: "", initialPrice: 0, minIncrement: 0, ended: false };
 }
 
 export const Auction = {
@@ -32,6 +33,9 @@ export const Auction = {
     }
     if (message.minIncrement !== 0) {
       writer.uint32(40).uint64(message.minIncrement);
+    }
+    if (message.ended === true) {
+      writer.uint32(48).bool(message.ended);
     }
     return writer;
   },
@@ -58,6 +62,9 @@ export const Auction = {
         case 5:
           message.minIncrement = longToNumber(reader.uint64() as Long);
           break;
+        case 6:
+          message.ended = reader.bool();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -73,6 +80,7 @@ export const Auction = {
       name: isSet(object.name) ? String(object.name) : "",
       initialPrice: isSet(object.initialPrice) ? Number(object.initialPrice) : 0,
       minIncrement: isSet(object.minIncrement) ? Number(object.minIncrement) : 0,
+      ended: isSet(object.ended) ? Boolean(object.ended) : false,
     };
   },
 
@@ -83,6 +91,7 @@ export const Auction = {
     message.name !== undefined && (obj.name = message.name);
     message.initialPrice !== undefined && (obj.initialPrice = Math.round(message.initialPrice));
     message.minIncrement !== undefined && (obj.minIncrement = Math.round(message.minIncrement));
+    message.ended !== undefined && (obj.ended = message.ended);
     return obj;
   },
 
@@ -93,6 +102,7 @@ export const Auction = {
     message.name = object.name ?? "";
     message.initialPrice = object.initialPrice ?? 0;
     message.minIncrement = object.minIncrement ?? 0;
+    message.ended = object.ended ?? false;
     return message;
   },
 };
