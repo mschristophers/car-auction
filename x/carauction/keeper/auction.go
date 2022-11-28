@@ -9,6 +9,42 @@ import (
 	"car-auction/x/carauction/types"
 )
 
+func (k Keeper) GetAuction(ctx sdk.Context, id uint64) (val types.Auction, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AuctionKey))
+
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, id)
+
+	b := store.Get(bz)
+	if b == nil {
+		return val, false
+	}
+
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
+}
+
+func (k Keeper) FinishAuction(ctx sdk.Context, id uint64) error {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AuctionKey))
+
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, id)
+
+	b := store.Get(bz)
+	if b == nil {
+		return types.AuctionNotFound
+	}
+
+	var auction types.Auction
+	k.cdc.MustUnmarshal(b, &auction)
+	auction.Ended = true
+
+	appendedValue := k.cdc.MustMarshal(&auction)
+
+	store.Set(bz, appendedValue)
+	return nil
+}
+
 func (k Keeper) GetAuctionCount(ctx sdk.Context) uint64 {
 	// Get the store using storeKey (aka "auction") and AuctionCountKey (aka "Auction/count/")
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.AuctionCountKey))

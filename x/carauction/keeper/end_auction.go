@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/binary"
-	"errors"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -36,50 +35,11 @@ func (k Keeper) SetEndAuctionCount(ctx sdk.Context, count uint64) {
 }
 
 func (k Keeper) AppendEndAuction(ctx sdk.Context, endAuction types.EndAuction) (uint64, uint64, error) {
-
-	auctionStore := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.AuctionKey))
-
-	byteAuctionId := make([]byte, 8)
-	binary.BigEndian.PutUint64(byteAuctionId, endAuction.AuctionID)
-
-	targetAuctionByte := auctionStore.Get(byteAuctionId)
-	var targetAuction types.Auction
-
-	if err := k.cdc.Unmarshal(targetAuctionByte, &targetAuction); err != nil {
-		return 0, 0, err
-	}
-
-	if targetAuction.Creator != endAuction.Creator {
-		return 0, 0, errors.New("It is not a target auction creator.")
-	}
-
-	if targetAuction.Ended {
-		return 0, 0, errors.New("The target auction already ended.")
-	}
-
-	bidStore := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.BidKey))
-
-	byteBidId := make([]byte, 8)
-	binary.BigEndian.PutUint64(byteBidId, endAuction.BidID)
-
-	targetBidByte := bidStore.Get(byteBidId)
-	var targetBid types.Bid
-
-	if err := k.cdc.Unmarshal(targetBidByte, &targetBid); err != nil {
-		return 0, 0, err
-	}
-
 	count := k.GetEndAuctionCount(ctx)
 
 	endAuction.Id = count
-	endAuction.FinalPrice = targetBid.BidPrice
 
-	// Update target auction status to ended
-	targetAuction.Ended = true
-	updatedTargetAuction := k.cdc.MustMarshal(&targetAuction)
-	auctionStore.Set(byteAuctionId, updatedTargetAuction)
-
-	// Save the Endd auction
+	// Save the End auction
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.EndAuctionKey))
 
 	byteKey := make([]byte, 8)
