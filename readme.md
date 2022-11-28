@@ -9,6 +9,31 @@ ignite chain serve
 
 `serve` command installs dependencies, builds, initializes, and starts your blockchain in development.
 
+### Creating an auction (for seller)
+```
+Format: auctiond tx auction create-auction "auction_name" initialPrice duration --from accountName
+Example: auctiond tx auction create-auction "carAuction" 100token 100 --from alpha
+```
+
+### Placing a bid (for buyer)
+```
+Format: auctiond tx auction place-bid auctionID bidPrice --from accoutName
+Example: auctiond tx auction place-bid 0 2000token --from alice
+```
+Notes:
+- The new bid must be higher than the previous bid
+- One can only place bid between creationTime and endTime
+
+### Finalizing an auction
+```
+Format: auctiond tx auction finalize-auction auctionID --from accoutName
+Example: auctiond tx auction finalize-auction 0 --from alpha
+```
+Notes:
+- Only the creator can finalize the auction
+- It can only be called when currentBlockHeight >= createAt (of auction) + duration (of auction)
+- It will transfer the token to the highest bidder
+
 ### Configure
 
 Your blockchain in development can be configured with `config.yml`. To learn more, see the [Ignite CLI docs](https://docs.ignite.com).
