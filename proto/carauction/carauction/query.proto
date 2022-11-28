@@ -7,6 +7,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "carauction/carauction/params.proto";
 import "carauction/carauction/auction.proto";
+import "carauction/carauction/bid.proto";
 import "carauction/carauction/end_auction.proto";
 
 option go_package = "car-auction/x/carauction/types";
@@ -25,6 +26,11 @@ service Query {
   // Queries a list of EndAuctions items.
 	rpc EndAuctions(QueryEndAuctionsRequest) returns (QueryEndAuctionsResponse) {
 		option (google.api.http).get = "/auction/auction/end_auctions";
+	}
+
+  // Queries a list of Bids items.
+	rpc Bids(QueryBidsRequest) returns (QueryBidsResponse) {
+		option (google.api.http).get = "/auction/auction/bids";
 	}
 
 }
@@ -53,5 +59,14 @@ message QueryEndAuctionsRequest {
 
 message QueryEndAuctionsResponse {
   repeated EndAuction EndAuction = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryBidsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryBidsResponse {
+  repeated Bid Bid = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

@@ -7,18 +7,12 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgAddBid } from "./types/carauction/carauction/tx";
 import { MsgEndAuction } from "./types/carauction/carauction/tx";
 import { MsgMakeAuction } from "./types/carauction/carauction/tx";
+import { MsgAddBid } from "./types/carauction/carauction/tx";
 
 
-export { MsgAddBid, MsgEndAuction, MsgMakeAuction };
-
-type sendMsgAddBidParams = {
-  value: MsgAddBid,
-  fee?: StdFee,
-  memo?: string
-};
+export { MsgEndAuction, MsgMakeAuction, MsgAddBid };
 
 type sendMsgEndAuctionParams = {
   value: MsgEndAuction,
@@ -32,10 +26,12 @@ type sendMsgMakeAuctionParams = {
   memo?: string
 };
 
-
-type msgAddBidParams = {
+type sendMsgAddBidParams = {
   value: MsgAddBid,
+  fee?: StdFee,
+  memo?: string
 };
+
 
 type msgEndAuctionParams = {
   value: MsgEndAuction,
@@ -43,6 +39,10 @@ type msgEndAuctionParams = {
 
 type msgMakeAuctionParams = {
   value: MsgMakeAuction,
+};
+
+type msgAddBidParams = {
+  value: MsgAddBid,
 };
 
 
@@ -62,20 +62,6 @@ interface TxClientOptions {
 export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "http://localhost:26657", prefix: "cosmos" }) => {
 
   return {
-		
-		async sendMsgAddBid({ value, fee, memo }: sendMsgAddBidParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddBid: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddBid({ value: MsgAddBid.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddBid: Could not broadcast Tx: '+ e.message)
-			}
-		},
 		
 		async sendMsgEndAuction({ value, fee, memo }: sendMsgEndAuctionParams): Promise<DeliverTxResponse> {
 			if (!signer) {
@@ -105,14 +91,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgAddBid({ value }: msgAddBidParams): EncodeObject {
-			try {
-				return { typeUrl: "/carauction.carauction.MsgAddBid", value: MsgAddBid.fromPartial( value ) }  
+		async sendMsgAddBid({ value, fee, memo }: sendMsgAddBidParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgAddBid: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgAddBid({ value: MsgAddBid.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgAddBid: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgAddBid: Could not broadcast Tx: '+ e.message)
 			}
 		},
+		
 		
 		msgEndAuction({ value }: msgEndAuctionParams): EncodeObject {
 			try {
@@ -127,6 +119,14 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return { typeUrl: "/carauction.carauction.MsgMakeAuction", value: MsgMakeAuction.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgMakeAuction: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgAddBid({ value }: msgAddBidParams): EncodeObject {
+			try {
+				return { typeUrl: "/carauction.carauction.MsgAddBid", value: MsgAddBid.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgAddBid: Could not create message: ' + e.message)
 			}
 		},
 		

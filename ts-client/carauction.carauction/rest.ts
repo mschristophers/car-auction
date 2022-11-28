@@ -29,6 +29,17 @@ export interface CarauctionAuction {
   ended?: boolean;
 }
 
+export interface CarauctionBid {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+
+  /** @format uint64 */
+  auctionID?: string;
+  bidPrice?: string;
+}
+
 export interface CarauctionEndAuction {
   creator?: string;
 
@@ -67,6 +78,21 @@ export type CarauctionParams = object;
 
 export interface CarauctionQueryAuctionsResponse {
   Auction?: CarauctionAuction[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface CarauctionQueryBidsResponse {
+  Bid?: CarauctionBid[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -311,6 +337,32 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryBids
+   * @summary Queries a list of Bids items.
+   * @request GET:/auction/auction/bids
+   */
+  queryBids = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<CarauctionQueryBidsResponse, RpcStatus>({
+      path: `/auction/auction/bids`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *
