@@ -41,6 +41,8 @@ message MsgEndAuction {
 }
 
 message MsgEndAuctionResponse {
+  uint64 id = 1;
+  uint64 finalPrice = 2;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

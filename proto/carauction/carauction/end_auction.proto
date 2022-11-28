@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package auction.auction;
+
+option go_package = "car-auction/x/carauction/types";
+
+message EndAuction {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 auctionID = 3;
+  uint64 bidID = 4;
+  uint64 finalPrice = 5;
+}

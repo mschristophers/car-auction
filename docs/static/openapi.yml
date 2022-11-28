@@ -44880,6 +44880,13 @@ definitions:
         format: uint64
   carauction.carauction.MsgEndAuctionResponse:
     type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      finalPrice:
+        type: string
+        format: uint64
   carauction.carauction.MsgMakeAuctionResponse:
     type: object
     properties:

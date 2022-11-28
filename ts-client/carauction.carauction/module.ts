@@ -7,21 +7,21 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgMakeAuction } from "./types/carauction/carauction/tx";
 import { MsgEndAuction } from "./types/carauction/carauction/tx";
+import { MsgMakeAuction } from "./types/carauction/carauction/tx";
 import { MsgAddBid } from "./types/carauction/carauction/tx";
 
 
-export { MsgMakeAuction, MsgEndAuction, MsgAddBid };
+export { MsgEndAuction, MsgMakeAuction, MsgAddBid };
 
-type sendMsgMakeAuctionParams = {
-  value: MsgMakeAuction,
+type sendMsgEndAuctionParams = {
+  value: MsgEndAuction,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgEndAuctionParams = {
-  value: MsgEndAuction,
+type sendMsgMakeAuctionParams = {
+  value: MsgMakeAuction,
   fee?: StdFee,
   memo?: string
 };
@@ -33,12 +33,12 @@ type sendMsgAddBidParams = {
 };
 
 
-type msgMakeAuctionParams = {
-  value: MsgMakeAuction,
-};
-
 type msgEndAuctionParams = {
   value: MsgEndAuction,
+};
+
+type msgMakeAuctionParams = {
+  value: MsgMakeAuction,
 };
 
 type msgAddBidParams = {
@@ -63,20 +63,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgMakeAuction({ value, fee, memo }: sendMsgMakeAuctionParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgMakeAuction: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgMakeAuction({ value: MsgMakeAuction.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgMakeAuction: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgEndAuction({ value, fee, memo }: sendMsgEndAuctionParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgEndAuction: Unable to sign Tx. Signer is not present.')
@@ -88,6 +74,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
 				throw new Error('TxClient:sendMsgEndAuction: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgMakeAuction({ value, fee, memo }: sendMsgMakeAuctionParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgMakeAuction: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgMakeAuction({ value: MsgMakeAuction.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgMakeAuction: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -106,19 +106,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		},
 		
 		
-		msgMakeAuction({ value }: msgMakeAuctionParams): EncodeObject {
-			try {
-				return { typeUrl: "/carauction.carauction.MsgMakeAuction", value: MsgMakeAuction.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgMakeAuction: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgEndAuction({ value }: msgEndAuctionParams): EncodeObject {
 			try {
 				return { typeUrl: "/carauction.carauction.MsgEndAuction", value: MsgEndAuction.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgEndAuction: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgMakeAuction({ value }: msgMakeAuctionParams): EncodeObject {
+			try {
+				return { typeUrl: "/carauction.carauction.MsgMakeAuction", value: MsgMakeAuction.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgMakeAuction: Could not create message: ' + e.message)
 			}
 		},
 		

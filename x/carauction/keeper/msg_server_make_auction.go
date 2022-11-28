@@ -14,6 +14,7 @@ func (k msgServer) MakeAuction(goCtx context.Context, msg *types.MsgMakeAuction)
 	// Seller makes an auction
 	auction := types.Auction{
 		Creator:      msg.Creator,
+		Name:         msg.Name,
 		InitialPrice: msg.InitialPrice,
 		MinIncrement: msg.MinIncrement,
 	}
