@@ -8,5 +8,5 @@ message Bid {
   string creator = 1;
   uint64 id = 2;
   uint64 auctionID = 3;
-  uint64 bidPrice = 4;
+  string bidPrice = 4;
 }

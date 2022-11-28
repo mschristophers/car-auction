@@ -8,14 +8,26 @@ export interface Auction {
   creator: string;
   id: number;
   name: string;
-  initialPrice: number;
+  initialPrice: string;
   duration: number;
   createdAt: number;
+  currentHighestBidID: number;
+  highestBidPresent: boolean;
   ended: boolean;
 }
 
 function createBaseAuction(): Auction {
-  return { creator: "", id: 0, name: "", initialPrice: 0, duration: 0, createdAt: 0, ended: false };
+  return {
+    creator: "",
+    id: 0,
+    name: "",
+    initialPrice: "",
+    duration: 0,
+    createdAt: 0,
+    currentHighestBidID: 0,
+    highestBidPresent: false,
+    ended: false,
+  };
 }
 
 export const Auction = {
@@ -29,8 +41,8 @@ export const Auction = {
     if (message.name !== "") {
       writer.uint32(26).string(message.name);
     }
-    if (message.initialPrice !== 0) {
-      writer.uint32(32).uint64(message.initialPrice);
+    if (message.initialPrice !== "") {
+      writer.uint32(34).string(message.initialPrice);
     }
     if (message.duration !== 0) {
       writer.uint32(40).uint64(message.duration);
@@ -38,8 +50,14 @@ export const Auction = {
     if (message.createdAt !== 0) {
       writer.uint32(48).int64(message.createdAt);
     }
+    if (message.currentHighestBidID !== 0) {
+      writer.uint32(56).uint64(message.currentHighestBidID);
+    }
+    if (message.highestBidPresent === true) {
+      writer.uint32(64).bool(message.highestBidPresent);
+    }
     if (message.ended === true) {
-      writer.uint32(56).bool(message.ended);
+      writer.uint32(72).bool(message.ended);
     }
     return writer;
   },
@@ -61,7 +79,7 @@ export const Auction = {
           message.name = reader.string();
           break;
         case 4:
-          message.initialPrice = longToNumber(reader.uint64() as Long);
+          message.initialPrice = reader.string();
           break;
         case 5:
           message.duration = longToNumber(reader.uint64() as Long);
@@ -70,6 +88,12 @@ export const Auction = {
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
         case 7:
+          message.currentHighestBidID = longToNumber(reader.uint64() as Long);
+          break;
+        case 8:
+          message.highestBidPresent = reader.bool();
+          break;
+        case 9:
           message.ended = reader.bool();
           break;
         default:
@@ -85,9 +109,11 @@ export const Auction = {
       creator: isSet(object.creator) ? String(object.creator) : "",
       id: isSet(object.id) ? Number(object.id) : 0,
       name: isSet(object.name) ? String(object.name) : "",
-      initialPrice: isSet(object.initialPrice) ? Number(object.initialPrice) : 0,
+      initialPrice: isSet(object.initialPrice) ? String(object.initialPrice) : "",
       duration: isSet(object.duration) ? Number(object.duration) : 0,
       createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
+      currentHighestBidID: isSet(object.currentHighestBidID) ? Number(object.currentHighestBidID) : 0,
+      highestBidPresent: isSet(object.highestBidPresent) ? Boolean(object.highestBidPresent) : false,
       ended: isSet(object.ended) ? Boolean(object.ended) : false,
     };
   },
@@ -97,9 +123,11 @@ export const Auction = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = Math.round(message.id));
     message.name !== undefined && (obj.name = message.name);
-    message.initialPrice !== undefined && (obj.initialPrice = Math.round(message.initialPrice));
+    message.initialPrice !== undefined && (obj.initialPrice = message.initialPrice);
     message.duration !== undefined && (obj.duration = Math.round(message.duration));
     message.createdAt !== undefined && (obj.createdAt = Math.round(message.createdAt));
+    message.currentHighestBidID !== undefined && (obj.currentHighestBidID = Math.round(message.currentHighestBidID));
+    message.highestBidPresent !== undefined && (obj.highestBidPresent = message.highestBidPresent);
     message.ended !== undefined && (obj.ended = message.ended);
     return obj;
   },
@@ -109,9 +137,11 @@ export const Auction = {
     message.creator = object.creator ?? "";
     message.id = object.id ?? 0;
     message.name = object.name ?? "";
-    message.initialPrice = object.initialPrice ?? 0;
+    message.initialPrice = object.initialPrice ?? "";
     message.duration = object.duration ?? 0;
     message.createdAt = object.createdAt ?? 0;
+    message.currentHighestBidID = object.currentHighestBidID ?? 0;
+    message.highestBidPresent = object.highestBidPresent ?? false;
     message.ended = object.ended ?? false;
     return message;
   },

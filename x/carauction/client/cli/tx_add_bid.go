@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"car-auction/x/carauction/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -23,10 +24,7 @@ func CmdAddBid() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argBidPrice, err := cast.ToUint64E(args[1])
-			if err != nil {
-				return err
-			}
+			argBidPrice := args[1]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

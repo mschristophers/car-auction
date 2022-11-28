@@ -15,8 +15,6 @@ export interface CarauctionAuction {
   /** @format uint64 */
   id?: string;
   name?: string;
-
-  /** @format uint64 */
   initialPrice?: string;
 
   /** @format uint64 */
@@ -24,6 +22,10 @@ export interface CarauctionAuction {
 
   /** @format int64 */
   createdAt?: string;
+
+  /** @format uint64 */
+  currentHighestBidID?: string;
+  highestBidPresent?: boolean;
   ended?: boolean;
 }
 
@@ -35,9 +37,7 @@ export interface CarauctionMsgAddBidResponse {
 export interface CarauctionMsgEndAuctionResponse {
   /** @format uint64 */
   id?: string;
-
-  /** @format uint64 */
-  finalPrice?: string;
+  hammerPrice?: string;
 }
 
 export interface CarauctionMsgMakeAuctionResponse {

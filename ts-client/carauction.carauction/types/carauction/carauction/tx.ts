@@ -7,7 +7,7 @@ export const protobufPackage = "carauction.carauction";
 export interface MsgMakeAuction {
   creator: string;
   name: string;
-  initialPrice: number;
+  initialPrice: string;
   duration: number;
 }
 
@@ -18,7 +18,7 @@ export interface MsgMakeAuctionResponse {
 export interface MsgAddBid {
   creator: string;
   auctionID: number;
-  bidPrice: number;
+  bidPrice: string;
 }
 
 export interface MsgAddBidResponse {
@@ -28,16 +28,15 @@ export interface MsgAddBidResponse {
 export interface MsgEndAuction {
   creator: string;
   auctionID: number;
-  bidID: number;
 }
 
 export interface MsgEndAuctionResponse {
   id: number;
-  finalPrice: number;
+  hammerPrice: string;
 }
 
 function createBaseMsgMakeAuction(): MsgMakeAuction {
-  return { creator: "", name: "", initialPrice: 0, duration: 0 };
+  return { creator: "", name: "", initialPrice: "", duration: 0 };
 }
 
 export const MsgMakeAuction = {
@@ -48,8 +47,8 @@ export const MsgMakeAuction = {
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
     }
-    if (message.initialPrice !== 0) {
-      writer.uint32(24).uint64(message.initialPrice);
+    if (message.initialPrice !== "") {
+      writer.uint32(26).string(message.initialPrice);
     }
     if (message.duration !== 0) {
       writer.uint32(32).uint64(message.duration);
@@ -71,7 +70,7 @@ export const MsgMakeAuction = {
           message.name = reader.string();
           break;
         case 3:
-          message.initialPrice = longToNumber(reader.uint64() as Long);
+          message.initialPrice = reader.string();
           break;
         case 4:
           message.duration = longToNumber(reader.uint64() as Long);
@@ -88,7 +87,7 @@ export const MsgMakeAuction = {
     return {
       creator: isSet(object.creator) ? String(object.creator) : "",
       name: isSet(object.name) ? String(object.name) : "",
-      initialPrice: isSet(object.initialPrice) ? Number(object.initialPrice) : 0,
+      initialPrice: isSet(object.initialPrice) ? String(object.initialPrice) : "",
       duration: isSet(object.duration) ? Number(object.duration) : 0,
     };
   },
@@ -97,7 +96,7 @@ export const MsgMakeAuction = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.name !== undefined && (obj.name = message.name);
-    message.initialPrice !== undefined && (obj.initialPrice = Math.round(message.initialPrice));
+    message.initialPrice !== undefined && (obj.initialPrice = message.initialPrice);
     message.duration !== undefined && (obj.duration = Math.round(message.duration));
     return obj;
   },
@@ -106,7 +105,7 @@ export const MsgMakeAuction = {
     const message = createBaseMsgMakeAuction();
     message.creator = object.creator ?? "";
     message.name = object.name ?? "";
-    message.initialPrice = object.initialPrice ?? 0;
+    message.initialPrice = object.initialPrice ?? "";
     message.duration = object.duration ?? 0;
     return message;
   },
@@ -160,7 +159,7 @@ export const MsgMakeAuctionResponse = {
 };
 
 function createBaseMsgAddBid(): MsgAddBid {
-  return { creator: "", auctionID: 0, bidPrice: 0 };
+  return { creator: "", auctionID: 0, bidPrice: "" };
 }
 
 export const MsgAddBid = {
@@ -171,8 +170,8 @@ export const MsgAddBid = {
     if (message.auctionID !== 0) {
       writer.uint32(16).uint64(message.auctionID);
     }
-    if (message.bidPrice !== 0) {
-      writer.uint32(24).uint64(message.bidPrice);
+    if (message.bidPrice !== "") {
+      writer.uint32(26).string(message.bidPrice);
     }
     return writer;
   },
@@ -191,7 +190,7 @@ export const MsgAddBid = {
           message.auctionID = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.bidPrice = longToNumber(reader.uint64() as Long);
+          message.bidPrice = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -205,7 +204,7 @@ export const MsgAddBid = {
     return {
       creator: isSet(object.creator) ? String(object.creator) : "",
       auctionID: isSet(object.auctionID) ? Number(object.auctionID) : 0,
-      bidPrice: isSet(object.bidPrice) ? Number(object.bidPrice) : 0,
+      bidPrice: isSet(object.bidPrice) ? String(object.bidPrice) : "",
     };
   },
 
@@ -213,7 +212,7 @@ export const MsgAddBid = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.auctionID !== undefined && (obj.auctionID = Math.round(message.auctionID));
-    message.bidPrice !== undefined && (obj.bidPrice = Math.round(message.bidPrice));
+    message.bidPrice !== undefined && (obj.bidPrice = message.bidPrice);
     return obj;
   },
 
@@ -221,7 +220,7 @@ export const MsgAddBid = {
     const message = createBaseMsgAddBid();
     message.creator = object.creator ?? "";
     message.auctionID = object.auctionID ?? 0;
-    message.bidPrice = object.bidPrice ?? 0;
+    message.bidPrice = object.bidPrice ?? "";
     return message;
   },
 };
@@ -274,7 +273,7 @@ export const MsgAddBidResponse = {
 };
 
 function createBaseMsgEndAuction(): MsgEndAuction {
-  return { creator: "", auctionID: 0, bidID: 0 };
+  return { creator: "", auctionID: 0 };
 }
 
 export const MsgEndAuction = {
@@ -284,9 +283,6 @@ export const MsgEndAuction = {
     }
     if (message.auctionID !== 0) {
       writer.uint32(16).uint64(message.auctionID);
-    }
-    if (message.bidID !== 0) {
-      writer.uint32(24).uint64(message.bidID);
     }
     return writer;
   },
@@ -304,9 +300,6 @@ export const MsgEndAuction = {
         case 2:
           message.auctionID = longToNumber(reader.uint64() as Long);
           break;
-        case 3:
-          message.bidID = longToNumber(reader.uint64() as Long);
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -319,7 +312,6 @@ export const MsgEndAuction = {
     return {
       creator: isSet(object.creator) ? String(object.creator) : "",
       auctionID: isSet(object.auctionID) ? Number(object.auctionID) : 0,
-      bidID: isSet(object.bidID) ? Number(object.bidID) : 0,
     };
   },
 
@@ -327,7 +319,6 @@ export const MsgEndAuction = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.auctionID !== undefined && (obj.auctionID = Math.round(message.auctionID));
-    message.bidID !== undefined && (obj.bidID = Math.round(message.bidID));
     return obj;
   },
 
@@ -335,13 +326,12 @@ export const MsgEndAuction = {
     const message = createBaseMsgEndAuction();
     message.creator = object.creator ?? "";
     message.auctionID = object.auctionID ?? 0;
-    message.bidID = object.bidID ?? 0;
     return message;
   },
 };
 
 function createBaseMsgEndAuctionResponse(): MsgEndAuctionResponse {
-  return { id: 0, finalPrice: 0 };
+  return { id: 0, hammerPrice: "" };
 }
 
 export const MsgEndAuctionResponse = {
@@ -349,8 +339,8 @@ export const MsgEndAuctionResponse = {
     if (message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
-    if (message.finalPrice !== 0) {
-      writer.uint32(16).uint64(message.finalPrice);
+    if (message.hammerPrice !== "") {
+      writer.uint32(18).string(message.hammerPrice);
     }
     return writer;
   },
@@ -366,7 +356,7 @@ export const MsgEndAuctionResponse = {
           message.id = longToNumber(reader.uint64() as Long);
           break;
         case 2:
-          message.finalPrice = longToNumber(reader.uint64() as Long);
+          message.hammerPrice = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -379,21 +369,21 @@ export const MsgEndAuctionResponse = {
   fromJSON(object: any): MsgEndAuctionResponse {
     return {
       id: isSet(object.id) ? Number(object.id) : 0,
-      finalPrice: isSet(object.finalPrice) ? Number(object.finalPrice) : 0,
+      hammerPrice: isSet(object.hammerPrice) ? String(object.hammerPrice) : "",
     };
   },
 
   toJSON(message: MsgEndAuctionResponse): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = Math.round(message.id));
-    message.finalPrice !== undefined && (obj.finalPrice = Math.round(message.finalPrice));
+    message.hammerPrice !== undefined && (obj.hammerPrice = message.hammerPrice);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgEndAuctionResponse>, I>>(object: I): MsgEndAuctionResponse {
     const message = createBaseMsgEndAuctionResponse();
     message.id = object.id ?? 0;
-    message.finalPrice = object.finalPrice ?? 0;
+    message.hammerPrice = object.hammerPrice ?? "";
     return message;
   },
 };

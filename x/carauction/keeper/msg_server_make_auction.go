@@ -15,7 +15,14 @@ func (k msgServer) MakeAuction(goCtx context.Context, msg *types.MsgMakeAuction)
 		return nil, types.AuctionDurationInvalid
 	}
 
-	if msg.InitialPrice <= 0 {
+	startPriceCoins, err := sdk.ParseCoinsNormalized(msg.InitialPrice)
+	if err != nil {
+		return nil, err
+	}
+
+	zero := sdk.Coins{sdk.NewInt64Coin("token", 0)}
+
+	if startPriceCoins.IsAllLTE(zero) {
 		return nil, types.AuctionPriceMustBePositive
 	}
 

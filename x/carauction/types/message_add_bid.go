@@ -9,7 +9,7 @@ const TypeMsgAddBid = "add_bid"
 
 var _ sdk.Msg = &MsgAddBid{}
 
-func NewMsgAddBid(creator string, auctionID uint64, bidPrice uint64) *MsgAddBid {
+func NewMsgAddBid(creator string, auctionID uint64, bidPrice string) *MsgAddBid {
 	return &MsgAddBid{
 		Creator:   creator,
 		AuctionID: auctionID,

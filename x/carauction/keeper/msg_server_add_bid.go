@@ -20,22 +20,56 @@ func (k msgServer) AddBid(goCtx context.Context, msg *types.MsgAddBid) (*types.M
 		return nil, types.AuctionEnded
 	}
 
-	if msg.BidPrice < 0 {
-		return nil, types.AuctionPriceMustBePositive
+	if uint64(auction.CreatedAt)+auction.Duration <= uint64(ctx.BlockHeight()) {
+		return nil, types.AuctionDurationPassed
 	}
 
-	if uint64(auction.CreatedAt)+auction.Duration <= uint64(ctx.BlockHeight()) {
-		if err := k.FinishAuction(ctx, auction.Id); err != nil {
+	msgBidPrice, _ := sdk.ParseCoinsNormalized(msg.BidPrice)
+	auctionInitialPrice, _ := sdk.ParseCoinsNormalized(auction.InitialPrice)
+
+	if auction.HighestBidPresent {
+		currentHighestBid, found := k.GetBid(ctx, auction.CurrentHighestBidID)
+		if !found {
+			return nil, types.InternalError
+		}
+
+		receiver, err := sdk.AccAddressFromBech32(currentHighestBid.Creator)
+		if err != nil {
 			return nil, err
 		}
-		return nil, types.AuctionEnded
+
+		bidPriceCoins, err := sdk.ParseCoinsNormalized(currentHighestBid.BidPrice)
+		if err != nil {
+			return nil, err
+		}
+
+		if err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, receiver, bidPriceCoins); err != nil {
+			return nil, err
+		}
+
+		auctionInitialPrice = bidPriceCoins
 	}
 
-	if auction.InitialPrice > msg.BidPrice {
+	if auctionInitialPrice.IsAllGTE(msgBidPrice) {
 		return nil, types.BidPriceTooLow
 	}
 
-	// Buyer makes a bid
+	sender, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	senderBalance := k.bankKeeper.SpendableCoins(ctx, sender)
+
+	bidPriceInCoin, err := sdk.ParseCoinsNormalized(string(msg.BidPrice))
+	if err != nil {
+		return nil, err
+	}
+
+	if bidPriceInCoin.IsAllGT(senderBalance) {
+		return nil, types.InsufficientBalance
+	}
+
 	bid := types.Bid{
 		Creator:   msg.Creator,
 		AuctionID: msg.AuctionID,
@@ -45,6 +79,17 @@ func (k msgServer) AddBid(goCtx context.Context, msg *types.MsgAddBid) (*types.M
 	if id, err := k.AppendBid(ctx, bid); err != nil {
 		return nil, err
 	} else {
+		if err := k.UpdateAuctionHighestBidID(ctx, msg.AuctionID, id); err != nil {
+			return nil, err
+		}
+		if err = k.bankKeeper.SendCoinsFromAccountToModule(
+			ctx,
+			sender,
+			types.ModuleName,
+			bidPriceInCoin,
+		); err != nil {
+			return nil, err
+		}
 		return &types.MsgAddBidResponse{Id: id}, nil
 	}
 }

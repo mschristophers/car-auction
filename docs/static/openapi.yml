@@ -28,13 +28,17 @@ paths:
                       type: string
                     initialPrice:
                       type: string
-                      format: uint64
                     duration:
                       type: string
                       format: uint64
                     createdAt:
                       type: string
                       format: int64
+                    currentHighestBidID:
+                      type: string
+                      format: uint64
+                    highestBidPresent:
+                      type: boolean
                     ended:
                       type: boolean
               pagination:
@@ -44869,13 +44873,17 @@ definitions:
         type: string
       initialPrice:
         type: string
-        format: uint64
       duration:
         type: string
         format: uint64
       createdAt:
         type: string
         format: int64
+      currentHighestBidID:
+        type: string
+        format: uint64
+      highestBidPresent:
+        type: boolean
       ended:
         type: boolean
   carauction.carauction.MsgAddBidResponse:
@@ -44890,9 +44898,8 @@ definitions:
       id:
         type: string
         format: uint64
-      finalPrice:
+      hammerPrice:
         type: string
-        format: uint64
   carauction.carauction.MsgMakeAuctionResponse:
     type: object
     properties:
@@ -44919,13 +44926,17 @@ definitions:
               type: string
             initialPrice:
               type: string
-              format: uint64
             duration:
               type: string
               format: uint64
             createdAt:
               type: string
               format: int64
+            currentHighestBidID:
+              type: string
+              format: uint64
+            highestBidPresent:
+              type: boolean
             ended:
               type: boolean
       pagination:

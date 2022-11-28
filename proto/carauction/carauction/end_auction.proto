@@ -9,5 +9,6 @@ message EndAuction {
   uint64 id = 2;
   uint64 auctionID = 3;
   uint64 bidID = 4;
-  uint64 finalPrice = 5;
+  string hammerPrice = 5;
+  string winner = 6;
 }

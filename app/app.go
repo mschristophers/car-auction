@@ -107,6 +107,7 @@ import (
 	carauctionmodule "car-auction/x/carauction"
 	carauctionmodulekeeper "car-auction/x/carauction/keeper"
 	carauctionmoduletypes "car-auction/x/carauction/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "car-auction/app/params"
@@ -507,6 +508,7 @@ func New(
 		keys[carauctionmoduletypes.StoreKey],
 		keys[carauctionmoduletypes.MemStoreKey],
 		app.GetSubspace(carauctionmoduletypes.ModuleName),
+		app.BankKeeper,
 	)
 	carauctionModule := carauctionmodule.NewAppModule(appCodec, app.CarauctionKeeper, app.AccountKeeper, app.BankKeeper)
 
@@ -747,6 +749,7 @@ func (app *App) LoadHeight(height int64) error {
 func (app *App) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
+		println(authtypes.NewModuleAddress(acc).String())
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
 	}
 

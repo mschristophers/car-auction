@@ -8,11 +8,11 @@ export interface Bid {
   creator: string;
   id: number;
   auctionID: number;
-  bidPrice: number;
+  bidPrice: string;
 }
 
 function createBaseBid(): Bid {
-  return { creator: "", id: 0, auctionID: 0, bidPrice: 0 };
+  return { creator: "", id: 0, auctionID: 0, bidPrice: "" };
 }
 
 export const Bid = {
@@ -26,8 +26,8 @@ export const Bid = {
     if (message.auctionID !== 0) {
       writer.uint32(24).uint64(message.auctionID);
     }
-    if (message.bidPrice !== 0) {
-      writer.uint32(32).uint64(message.bidPrice);
+    if (message.bidPrice !== "") {
+      writer.uint32(34).string(message.bidPrice);
     }
     return writer;
   },
@@ -49,7 +49,7 @@ export const Bid = {
           message.auctionID = longToNumber(reader.uint64() as Long);
           break;
         case 4:
-          message.bidPrice = longToNumber(reader.uint64() as Long);
+          message.bidPrice = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -64,7 +64,7 @@ export const Bid = {
       creator: isSet(object.creator) ? String(object.creator) : "",
       id: isSet(object.id) ? Number(object.id) : 0,
       auctionID: isSet(object.auctionID) ? Number(object.auctionID) : 0,
-      bidPrice: isSet(object.bidPrice) ? Number(object.bidPrice) : 0,
+      bidPrice: isSet(object.bidPrice) ? String(object.bidPrice) : "",
     };
   },
 
@@ -73,7 +73,7 @@ export const Bid = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = Math.round(message.id));
     message.auctionID !== undefined && (obj.auctionID = Math.round(message.auctionID));
-    message.bidPrice !== undefined && (obj.bidPrice = Math.round(message.bidPrice));
+    message.bidPrice !== undefined && (obj.bidPrice = message.bidPrice);
     return obj;
   },
 
@@ -82,7 +82,7 @@ export const Bid = {
     message.creator = object.creator ?? "";
     message.id = object.id ?? 0;
     message.auctionID = object.auctionID ?? 0;
-    message.bidPrice = object.bidPrice ?? 0;
+    message.bidPrice = object.bidPrice ?? "";
     return message;
   },
 };

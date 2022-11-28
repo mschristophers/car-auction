@@ -8,8 +8,10 @@ message Auction {
   string creator = 1;
   uint64 id = 2;
   string name = 3;
-  uint64 initialPrice = 4;
+  string initialPrice = 4;
   uint64  duration = 5;
   int64   createdAt = 6;
-  bool ended = 7;
+  uint64  currentHighestBidID = 7;
+  bool    highestBidPresent = 8;
+  bool    ended = 9;
 }

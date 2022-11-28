@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"car-auction/x/carauction/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -15,15 +16,11 @@ var _ = strconv.Itoa(0)
 
 func CmdEndAuction() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "end-auction [auction-id] [bid-id]",
+		Use:   "end-auction [auction-id]",
 		Short: "Broadcast message endAuction",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argAuctionID, err := cast.ToUint64E(args[0])
-			if err != nil {
-				return err
-			}
-			argBidID, err := cast.ToUint64E(args[1])
 			if err != nil {
 				return err
 			}
@@ -36,7 +33,6 @@ func CmdEndAuction() *cobra.Command {
 			msg := types.NewMsgEndAuction(
 				clientCtx.GetFromAddress().String(),
 				argAuctionID,
-				argBidID,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

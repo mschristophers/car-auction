@@ -16,7 +16,7 @@ service Msg {
 message MsgMakeAuction {
   string creator = 1;
   string name = 2;
-  uint64 initialPrice = 3;
+  string initialPrice = 3;
   uint64 duration = 4;
 }
 
@@ -27,22 +27,21 @@ message MsgMakeAuctionResponse {
 message MsgAddBid {
   string creator = 1;
   uint64 auctionID = 2;
-  uint64 bidPrice = 3;
+  string bidPrice = 3;
 }
 
 message MsgAddBidResponse {
-uint64 id = 1;
+  uint64 id = 1;
 }
 
 message MsgEndAuction {
   string creator = 1;
   uint64 auctionID = 2;
-  uint64 bidID = 3;
 }
 
 message MsgEndAuctionResponse {
   uint64 id = 1;
-  uint64 finalPrice = 2;
+  string hammerPrice = 2;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

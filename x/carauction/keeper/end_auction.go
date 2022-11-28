@@ -34,7 +34,7 @@ func (k Keeper) SetEndAuctionCount(ctx sdk.Context, count uint64) {
 	store.Set(byteKey, bz)
 }
 
-func (k Keeper) AppendEndAuction(ctx sdk.Context, endAuction types.EndAuction) (uint64, uint64, error) {
+func (k Keeper) AppendEndAuction(ctx sdk.Context, endAuction types.EndAuction) (uint64, string, error) {
 	count := k.GetEndAuctionCount(ctx)
 
 	endAuction.Id = count
@@ -50,5 +50,5 @@ func (k Keeper) AppendEndAuction(ctx sdk.Context, endAuction types.EndAuction) (
 	store.Set(byteKey, appendedValue)
 
 	k.SetEndAuctionCount(ctx, count+1)
-	return count, endAuction.FinalPrice, nil
+	return count, endAuction.HammerPrice, nil
 }

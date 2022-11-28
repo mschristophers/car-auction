@@ -24,28 +24,49 @@ func (k msgServer) EndAuction(goCtx context.Context, msg *types.MsgEndAuction) (
 		return nil, types.NotAuctionOwner
 	}
 
-	bid, found := k.GetBid(ctx, msg.BidID)
-	if !found {
-		return nil, types.BidNotFound
+	if uint64(auction.CreatedAt)+auction.Duration > uint64(ctx.BlockHeight()) {
+		return nil, types.AuctionEndsTooEarly
+	}
+
+	hammerBidPrice := "0"
+	bidCreator := ""
+	if auction.HighestBidPresent {
+		bid, found := k.GetBid(ctx, auction.CurrentHighestBidID)
+		if found {
+			hammerBidPrice = bid.BidPrice
+			bidCreator = bid.Creator
+		}
 	}
 
 	end := types.EndAuction{
-		Creator:    msg.Creator,
-		AuctionID:  msg.AuctionID,
-		BidID:      msg.BidID,
-		FinalPrice: bid.BidPrice,
+		Creator:     msg.Creator,
+		AuctionID:   msg.AuctionID,
+		BidID:       auction.CurrentHighestBidID,
+		HammerPrice: hammerBidPrice,
+		Winner:      bidCreator,
 	}
 
-	if id, finalPrice, err := k.AppendEndAuction(ctx, end); err != nil {
+	if id, hammerPrice, err := k.AppendEndAuction(ctx, end); err != nil {
 		return nil, err
 	} else {
 		if err = k.FinishAuction(ctx, msg.AuctionID); err != nil {
 			return nil, err
 		}
 
+		hammerPriceCoin, err := sdk.ParseCoinsNormalized(end.HammerPrice)
+		if err != nil {
+			return nil, err
+		}
+
+		receiver, err := sdk.AccAddressFromBech32(msg.Creator)
+
+		if err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, receiver, hammerPriceCoin); err != nil {
+			return nil, err
+		}
+
 		return &types.MsgEndAuctionResponse{
-			Id:         id,
-			FinalPrice: finalPrice,
+			Id:          id,
+			HammerPrice: hammerPrice,
 		}, nil
 	}
 }

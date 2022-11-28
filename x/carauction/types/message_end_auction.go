@@ -9,11 +9,10 @@ const TypeMsgEndAuction = "end_auction"
 
 var _ sdk.Msg = &MsgEndAuction{}
 
-func NewMsgEndAuction(creator string, auctionID uint64, bidID uint64) *MsgEndAuction {
+func NewMsgEndAuction(creator string, auctionID uint64) *MsgEndAuction {
 	return &MsgEndAuction{
 		Creator:   creator,
 		AuctionID: auctionID,
-		BidID:     bidID,
 	}
 }
 
