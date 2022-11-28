@@ -1,0 +1,76 @@
+syntax = "proto3";
+package auction.auction;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "auction/auction/params.proto";
+import "auction/auction/auction.proto";
+import "auction/auction/bid.proto";
+import "auction/auction/finalize_auction.proto";
+
+// this line is used by starport scaffolding # 1
+
+option go_package = "auction/x/auction/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/auction/auction/params";
+  }
+  // Queries a list of Auctions items.
+	rpc Auctions(QueryAuctionsRequest) returns (QueryAuctionsResponse) {
+		option (google.api.http).get = "/auction/auction/auctions";
+	}
+
+// Queries a list of FinalizedAuctions items.
+	rpc FinalizedAuctions(QueryFinalizedAuctionsRequest) returns (QueryFinalizedAuctionsResponse) {
+		option (google.api.http).get = "/auction/auction/finalized_auctions";
+	}
+
+// Queries a list of Bids items.
+	rpc Bids(QueryBidsRequest) returns (QueryBidsResponse) {
+		option (google.api.http).get = "/auction/auction/bids";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAuctionsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAuctionsResponse {
+  repeated Auction Auction = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryFinalizedAuctionsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryFinalizedAuctionsResponse {
+  repeated FinalizeAuction FinalizedAuction = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryBidsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryBidsResponse {
+  repeated Bid Bid = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// this line is used by starport scaffolding # 3

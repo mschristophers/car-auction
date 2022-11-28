@@ -1,4 +1,4 @@
-module car-auction
+module auction
 
 go 1.18
 

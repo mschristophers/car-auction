@@ -1,10 +1,10 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
-import CarauctionCarauction from './carauction.carauction'
+import AuctionAuction from './auction.auction'
 
 
 export default { 
-  CarauctionCarauction: load(CarauctionCarauction, 'carauction.carauction'),
+  AuctionAuction: load(AuctionAuction, 'auction.auction'),
   
 }
 

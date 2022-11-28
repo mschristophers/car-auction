@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"car-auction/app"
+	"auction/app"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"

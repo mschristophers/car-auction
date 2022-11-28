@@ -104,19 +104,18 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	carauctionmodule "car-auction/x/carauction"
-	carauctionmodulekeeper "car-auction/x/carauction/keeper"
-	carauctionmoduletypes "car-auction/x/carauction/types"
-
+	auctionmodule "auction/x/auction"
+	auctionmodulekeeper "auction/x/auction/keeper"
+	auctionmoduletypes "auction/x/auction/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
-	appparams "car-auction/app/params"
-	"car-auction/docs"
+	appparams "auction/app/params"
+	"auction/docs"
 )
 
 const (
-	AccountAddressPrefix = "car-auction"
-	Name                 = "car-auction"
+	AccountAddressPrefix = "auction"
+	Name                 = "auction"
 )
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
@@ -166,7 +165,7 @@ var (
 		transfer.AppModuleBasic{},
 		ica.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		carauctionmodule.AppModuleBasic{},
+		auctionmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -180,6 +179,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		auctionmoduletypes.ModuleName:  {authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -240,7 +240,7 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
-	CarauctionKeeper carauctionmodulekeeper.Keeper
+	AuctionKeeper auctionmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -285,7 +285,7 @@ func New(
 		paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey, evidencetypes.StoreKey,
 		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
 		icacontrollertypes.StoreKey,
-		carauctionmoduletypes.StoreKey,
+		auctionmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -503,14 +503,14 @@ func New(
 		govConfig,
 	)
 
-	app.CarauctionKeeper = *carauctionmodulekeeper.NewKeeper(
+	app.AuctionKeeper = *auctionmodulekeeper.NewKeeper(
 		appCodec,
-		keys[carauctionmoduletypes.StoreKey],
-		keys[carauctionmoduletypes.MemStoreKey],
-		app.GetSubspace(carauctionmoduletypes.ModuleName),
+		keys[auctionmoduletypes.StoreKey],
+		keys[auctionmoduletypes.MemStoreKey],
+		app.GetSubspace(auctionmoduletypes.ModuleName),
 		app.BankKeeper,
 	)
-	carauctionModule := carauctionmodule.NewAppModule(appCodec, app.CarauctionKeeper, app.AccountKeeper, app.BankKeeper)
+	auctionModule := auctionmodule.NewAppModule(appCodec, app.AuctionKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -557,7 +557,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		icaModule,
-		carauctionModule,
+		auctionModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -587,7 +587,7 @@ func New(
 		group.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
-		carauctionmoduletypes.ModuleName,
+		auctionmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -612,7 +612,7 @@ func New(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
-		carauctionmoduletypes.ModuleName,
+		auctionmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -642,7 +642,7 @@ func New(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
-		carauctionmoduletypes.ModuleName,
+		auctionmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -672,7 +672,7 @@ func New(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
-		carauctionModule,
+		auctionModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -872,7 +872,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
-	paramsKeeper.Subspace(carauctionmoduletypes.ModuleName)
+	paramsKeeper.Subspace(auctionmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

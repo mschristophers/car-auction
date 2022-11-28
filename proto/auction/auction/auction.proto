@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package auction.auction;
+
+option go_package = "auction/x/auction/types";
+
+message Auction {
+  string  creator = 1;
+  uint64  id = 2;
+  string  name = 3;
+  string  initialPrice = 4;
+  uint64  duration = 5;
+  int64   createdAt = 6;
+  uint64  currentHighestBidID = 7;
+  bool    highestBidIsPresent = 8;
+  bool    ended = 9;
+}

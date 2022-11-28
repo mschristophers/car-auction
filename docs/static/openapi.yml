@@ -4,10 +4,152 @@ info:
   name: ''
   description: ''
 paths:
+  /auction/auction/auctions:
+    get:
+      summary: Queries a list of Auctions items.
+      operationId: AuctionAuctionAuctions
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Auction:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    creator:
+                      type: string
+                    id:
+                      type: string
+                      format: uint64
+                    name:
+                      type: string
+                    initialPrice:
+                      type: string
+                    duration:
+                      type: string
+                      format: uint64
+                    createdAt:
+                      type: string
+                      format: int64
+                    currentHighestBidID:
+                      type: string
+                      format: uint64
+                    highestBidIsPresent:
+                      type: boolean
+                    ended:
+                      type: boolean
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /auction/auction/bids:
     get:
       summary: Queries a list of Bids items.
-      operationId: CarauctionCarauctionBids
+      operationId: AuctionAuctionBids
       responses:
         '200':
           description: A successful response.
@@ -134,17 +276,17 @@ paths:
           type: boolean
       tags:
         - Query
-  /auction/auction/end_auctions:
+  /auction/auction/finalized_auctions:
     get:
-      summary: Queries a list of EndAuctions items.
-      operationId: CarauctionCarauctionEndAuctions
+      summary: Queries a list of FinalizedAuctions items.
+      operationId: AuctionAuctionFinalizedAuctions
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              EndAuction:
+              FinalizedAuction:
                 type: array
                 items:
                   type: object
@@ -160,7 +302,7 @@ paths:
                     bidID:
                       type: string
                       format: uint64
-                    hammerPrice:
+                    finalPrice:
                       type: string
                     winner:
                       type: string
@@ -269,152 +411,10 @@ paths:
           type: boolean
       tags:
         - Query
-  /carauction/carauction/auctions:
-    get:
-      summary: Queries a list of Auctions items.
-      operationId: CarauctionCarauctionAuctions
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              Auction:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    creator:
-                      type: string
-                    id:
-                      type: string
-                      format: uint64
-                    name:
-                      type: string
-                    initialPrice:
-                      type: string
-                    duration:
-                      type: string
-                      format: uint64
-                    createdAt:
-                      type: string
-                      format: int64
-                    currentHighestBidID:
-                      type: string
-                      format: uint64
-                    highestBidPresent:
-                      type: boolean
-                    ended:
-                      type: boolean
-              pagination:
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    description: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  /carauction/carauction/params:
+  /auction/auction/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: CarauctionCarauctionParams
+      operationId: AuctionAuctionParams
       responses:
         '200':
           description: A successful response.
@@ -45126,7 +45126,7 @@ paths:
       tags:
         - Query
 definitions:
-  carauction.carauction.Auction:
+  auction.auction.Auction:
     type: object
     properties:
       creator:
@@ -45147,11 +45147,11 @@ definitions:
       currentHighestBidID:
         type: string
         format: uint64
-      highestBidPresent:
+      highestBidIsPresent:
         type: boolean
       ended:
         type: boolean
-  carauction.carauction.Bid:
+  auction.auction.Bid:
     type: object
     properties:
       creator:
@@ -45164,7 +45164,7 @@ definitions:
         format: uint64
       bidPrice:
         type: string
-  carauction.carauction.EndAuction:
+  auction.auction.FinalizeAuction:
     type: object
     properties:
       creator:
@@ -45178,34 +45178,34 @@ definitions:
       bidID:
         type: string
         format: uint64
-      hammerPrice:
+      finalPrice:
         type: string
       winner:
         type: string
-  carauction.carauction.MsgAddBidResponse:
+  auction.auction.MsgCreateAuctionResponse:
     type: object
     properties:
       id:
         type: string
         format: uint64
-  carauction.carauction.MsgEndAuctionResponse:
+  auction.auction.MsgFinalizeAuctionResponse:
     type: object
     properties:
       id:
         type: string
         format: uint64
-      hammerPrice:
+      finalPrice:
         type: string
-  carauction.carauction.MsgMakeAuctionResponse:
+  auction.auction.MsgPlaceBidResponse:
     type: object
     properties:
       id:
         type: string
         format: uint64
-  carauction.carauction.Params:
+  auction.auction.Params:
     type: object
     description: Params defines the parameters for the module.
-  carauction.carauction.QueryAuctionsResponse:
+  auction.auction.QueryAuctionsResponse:
     type: object
     properties:
       Auction:
@@ -45231,7 +45231,7 @@ definitions:
             currentHighestBidID:
               type: string
               format: uint64
-            highestBidPresent:
+            highestBidIsPresent:
               type: boolean
             ended:
               type: boolean
@@ -45261,7 +45261,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  carauction.carauction.QueryBidsResponse:
+  auction.auction.QueryBidsResponse:
     type: object
     properties:
       Bid:
@@ -45305,10 +45305,10 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  carauction.carauction.QueryEndAuctionsResponse:
+  auction.auction.QueryFinalizedAuctionsResponse:
     type: object
     properties:
-      EndAuction:
+      FinalizedAuction:
         type: array
         items:
           type: object
@@ -45324,7 +45324,7 @@ definitions:
             bidID:
               type: string
               format: uint64
-            hammerPrice:
+            finalPrice:
               type: string
             winner:
               type: string
@@ -45354,7 +45354,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  carauction.carauction.QueryParamsResponse:
+  auction.auction.QueryParamsResponse:
     type: object
     properties:
       params:
