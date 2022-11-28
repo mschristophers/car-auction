@@ -8,7 +8,7 @@ export interface MsgMakeAuction {
   creator: string;
   name: string;
   initialPrice: number;
-  minIncrement: number;
+  duration: number;
 }
 
 export interface MsgMakeAuctionResponse {
@@ -37,7 +37,7 @@ export interface MsgEndAuctionResponse {
 }
 
 function createBaseMsgMakeAuction(): MsgMakeAuction {
-  return { creator: "", name: "", initialPrice: 0, minIncrement: 0 };
+  return { creator: "", name: "", initialPrice: 0, duration: 0 };
 }
 
 export const MsgMakeAuction = {
@@ -51,8 +51,8 @@ export const MsgMakeAuction = {
     if (message.initialPrice !== 0) {
       writer.uint32(24).uint64(message.initialPrice);
     }
-    if (message.minIncrement !== 0) {
-      writer.uint32(32).uint64(message.minIncrement);
+    if (message.duration !== 0) {
+      writer.uint32(32).uint64(message.duration);
     }
     return writer;
   },
@@ -74,7 +74,7 @@ export const MsgMakeAuction = {
           message.initialPrice = longToNumber(reader.uint64() as Long);
           break;
         case 4:
-          message.minIncrement = longToNumber(reader.uint64() as Long);
+          message.duration = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -89,7 +89,7 @@ export const MsgMakeAuction = {
       creator: isSet(object.creator) ? String(object.creator) : "",
       name: isSet(object.name) ? String(object.name) : "",
       initialPrice: isSet(object.initialPrice) ? Number(object.initialPrice) : 0,
-      minIncrement: isSet(object.minIncrement) ? Number(object.minIncrement) : 0,
+      duration: isSet(object.duration) ? Number(object.duration) : 0,
     };
   },
 
@@ -98,7 +98,7 @@ export const MsgMakeAuction = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.name !== undefined && (obj.name = message.name);
     message.initialPrice !== undefined && (obj.initialPrice = Math.round(message.initialPrice));
-    message.minIncrement !== undefined && (obj.minIncrement = Math.round(message.minIncrement));
+    message.duration !== undefined && (obj.duration = Math.round(message.duration));
     return obj;
   },
 
@@ -107,7 +107,7 @@ export const MsgMakeAuction = {
     message.creator = object.creator ?? "";
     message.name = object.name ?? "";
     message.initialPrice = object.initialPrice ?? 0;
-    message.minIncrement = object.minIncrement ?? 0;
+    message.duration = object.duration ?? 0;
     return message;
   },
 };

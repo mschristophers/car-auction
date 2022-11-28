@@ -9,12 +9,13 @@ export interface Auction {
   id: number;
   name: string;
   initialPrice: number;
-  minIncrement: number;
+  duration: number;
+  createdAt: number;
   ended: boolean;
 }
 
 function createBaseAuction(): Auction {
-  return { creator: "", id: 0, name: "", initialPrice: 0, minIncrement: 0, ended: false };
+  return { creator: "", id: 0, name: "", initialPrice: 0, duration: 0, createdAt: 0, ended: false };
 }
 
 export const Auction = {
@@ -31,11 +32,14 @@ export const Auction = {
     if (message.initialPrice !== 0) {
       writer.uint32(32).uint64(message.initialPrice);
     }
-    if (message.minIncrement !== 0) {
-      writer.uint32(40).uint64(message.minIncrement);
+    if (message.duration !== 0) {
+      writer.uint32(40).uint64(message.duration);
+    }
+    if (message.createdAt !== 0) {
+      writer.uint32(48).int64(message.createdAt);
     }
     if (message.ended === true) {
-      writer.uint32(48).bool(message.ended);
+      writer.uint32(56).bool(message.ended);
     }
     return writer;
   },
@@ -60,9 +64,12 @@ export const Auction = {
           message.initialPrice = longToNumber(reader.uint64() as Long);
           break;
         case 5:
-          message.minIncrement = longToNumber(reader.uint64() as Long);
+          message.duration = longToNumber(reader.uint64() as Long);
           break;
         case 6:
+          message.createdAt = longToNumber(reader.int64() as Long);
+          break;
+        case 7:
           message.ended = reader.bool();
           break;
         default:
@@ -79,7 +86,8 @@ export const Auction = {
       id: isSet(object.id) ? Number(object.id) : 0,
       name: isSet(object.name) ? String(object.name) : "",
       initialPrice: isSet(object.initialPrice) ? Number(object.initialPrice) : 0,
-      minIncrement: isSet(object.minIncrement) ? Number(object.minIncrement) : 0,
+      duration: isSet(object.duration) ? Number(object.duration) : 0,
+      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
       ended: isSet(object.ended) ? Boolean(object.ended) : false,
     };
   },
@@ -90,7 +98,8 @@ export const Auction = {
     message.id !== undefined && (obj.id = Math.round(message.id));
     message.name !== undefined && (obj.name = message.name);
     message.initialPrice !== undefined && (obj.initialPrice = Math.round(message.initialPrice));
-    message.minIncrement !== undefined && (obj.minIncrement = Math.round(message.minIncrement));
+    message.duration !== undefined && (obj.duration = Math.round(message.duration));
+    message.createdAt !== undefined && (obj.createdAt = Math.round(message.createdAt));
     message.ended !== undefined && (obj.ended = message.ended);
     return obj;
   },
@@ -101,7 +110,8 @@ export const Auction = {
     message.id = object.id ?? 0;
     message.name = object.name ?? "";
     message.initialPrice = object.initialPrice ?? 0;
-    message.minIncrement = object.minIncrement ?? 0;
+    message.duration = object.duration ?? 0;
+    message.createdAt = object.createdAt ?? 0;
     message.ended = object.ended ?? false;
     return message;
   },

@@ -20,7 +20,10 @@ export interface CarauctionAuction {
   initialPrice?: string;
 
   /** @format uint64 */
-  minIncrement?: string;
+  duration?: string;
+
+  /** @format int64 */
+  createdAt?: string;
   ended?: boolean;
 }
 

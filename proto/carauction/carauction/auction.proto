@@ -9,6 +9,7 @@ message Auction {
   uint64 id = 2;
   string name = 3;
   uint64 initialPrice = 4;
-  uint64 minIncrement = 5;
-  bool ended = 6;
+  uint64  duration = 5;
+  int64   createdAt = 6;
+  bool ended = 7;
 }

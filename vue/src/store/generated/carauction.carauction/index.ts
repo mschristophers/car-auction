@@ -165,19 +165,6 @@ export default {
 		},
 		
 		
-		async sendMsgEndAuction({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.CarauctionCarauction.tx.sendMsgEndAuction({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgEndAuction:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgEndAuction:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgAddBid({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -188,6 +175,19 @@ export default {
 					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgAddBid:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgEndAuction({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.CarauctionCarauction.tx.sendMsgEndAuction({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgEndAuction:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgEndAuction:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -205,19 +205,6 @@ export default {
 			}
 		},
 		
-		async MsgEndAuction({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.CarauctionCarauction.tx.msgEndAuction({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgEndAuction:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgEndAuction:Create Could not create message: ' + e.message)
-				}
-			}
-		},
 		async MsgAddBid({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -228,6 +215,19 @@ export default {
 					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgAddBid:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgEndAuction({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.CarauctionCarauction.tx.msgEndAuction({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgEndAuction:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgEndAuction:Create Could not create message: ' + e.message)
 				}
 			}
 		},

@@ -21,15 +21,18 @@ func (k msgServer) AddBid(goCtx context.Context, msg *types.MsgAddBid) (*types.M
 	}
 
 	if msg.BidPrice < 0 {
-		return nil, types.BidPriceMustBePositive
+		return nil, types.AuctionPriceMustBePositive
 	}
 
-	if msg.BidPrice < auction.InitialPrice {
+	if uint64(auction.CreatedAt)+auction.Duration <= uint64(ctx.BlockHeight()) {
+		if err := k.FinishAuction(ctx, auction.Id); err != nil {
+			return nil, err
+		}
+		return nil, types.AuctionEnded
+	}
+
+	if auction.InitialPrice > msg.BidPrice {
 		return nil, types.BidPriceTooLow
-	}
-
-	if msg.BidPrice-auction.InitialPrice < auction.MinIncrement {
-		return nil, types.BidPriceStepTooLow
 	}
 
 	// Buyer makes a bid

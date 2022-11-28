@@ -29,9 +29,12 @@ paths:
                     initialPrice:
                       type: string
                       format: uint64
-                    minIncrement:
+                    duration:
                       type: string
                       format: uint64
+                    createdAt:
+                      type: string
+                      format: int64
                     ended:
                       type: boolean
               pagination:
@@ -44867,9 +44870,12 @@ definitions:
       initialPrice:
         type: string
         format: uint64
-      minIncrement:
+      duration:
         type: string
         format: uint64
+      createdAt:
+        type: string
+        format: int64
       ended:
         type: boolean
   carauction.carauction.MsgAddBidResponse:
@@ -44914,9 +44920,12 @@ definitions:
             initialPrice:
               type: string
               format: uint64
-            minIncrement:
+            duration:
               type: string
               format: uint64
+            createdAt:
+              type: string
+              format: int64
             ended:
               type: boolean
       pagination:
