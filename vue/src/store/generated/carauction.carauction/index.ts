@@ -2,10 +2,11 @@ import { Client, registry, MissingWalletError } from 'car-auction-client-ts'
 
 import { Auction } from "car-auction-client-ts/carauction.carauction/types"
 import { Bid } from "car-auction-client-ts/carauction.carauction/types"
+import { EndAuction } from "car-auction-client-ts/carauction.carauction/types"
 import { Params } from "car-auction-client-ts/carauction.carauction/types"
 
 
-export { Auction, Bid, Params };
+export { Auction, Bid, EndAuction, Params };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -38,10 +39,12 @@ const getDefaultState = () => {
 	return {
 				Params: {},
 				Auctions: {},
+				EndAuctions: {},
 				
 				_Structure: {
 						Auction: getStructure(Auction.fromPartial({})),
 						Bid: getStructure(Bid.fromPartial({})),
+						EndAuction: getStructure(EndAuction.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						
 		},
@@ -82,6 +85,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Auctions[JSON.stringify(params)] ?? {}
+		},
+				getEndAuctions: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.EndAuctions[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -165,16 +174,42 @@ export default {
 		},
 		
 		
-		async sendMsgMakeAuction({ rootGetters }, { value, fee = [], memo = '' }) {
+		
+		
+		 		
+		
+		
+		async QueryEndAuctions({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.CarauctionCarauction.query.queryEndAuctions(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.CarauctionCarauction.query.queryEndAuctions({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'EndAuctions', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryEndAuctions', payload: { options: { all }, params: {...key},query }})
+				return getters['getEndAuctions']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryEndAuctions API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		async sendMsgAddBid({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.CarauctionCarauction.tx.sendMsgMakeAuction({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.CarauctionCarauction.tx.sendMsgAddBid({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMakeAuction:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgMakeAuction:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgAddBid:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -191,30 +226,30 @@ export default {
 				}
 			}
 		},
-		async sendMsgAddBid({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgMakeAuction({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.CarauctionCarauction.tx.sendMsgAddBid({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.CarauctionCarauction.tx.sendMsgMakeAuction({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgMakeAuction:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgAddBid:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgMakeAuction:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgMakeAuction({ rootGetters }, { value }) {
+		async MsgAddBid({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.CarauctionCarauction.tx.msgMakeAuction({value})
+				const msg = await client.CarauctionCarauction.tx.msgAddBid({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMakeAuction:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgMakeAuction:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgAddBid:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -231,16 +266,16 @@ export default {
 				}
 			}
 		},
-		async MsgAddBid({ rootGetters }, { value }) {
+		async MsgMakeAuction({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.CarauctionCarauction.tx.msgAddBid({value})
+				const msg = await client.CarauctionCarauction.tx.msgMakeAuction({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddBid:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgMakeAuction:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgAddBid:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgMakeAuction:Create Could not create message: ' + e.message)
 				}
 			}
 		},

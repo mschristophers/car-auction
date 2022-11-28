@@ -2,6 +2,7 @@
 import _m0 from "protobufjs/minimal";
 import { PageRequest, PageResponse } from "../../cosmos/base/query/v1beta1/pagination";
 import { Auction } from "./auction";
+import { EndAuction } from "./end_auction";
 import { Params } from "./params";
 
 export const protobufPackage = "carauction.carauction";
@@ -22,6 +23,15 @@ export interface QueryAuctionsRequest {
 
 export interface QueryAuctionsResponse {
   Auction: Auction[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryEndAuctionsRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryEndAuctionsResponse {
+  EndAuction: EndAuction[];
   pagination: PageResponse | undefined;
 }
 
@@ -228,12 +238,129 @@ export const QueryAuctionsResponse = {
   },
 };
 
+function createBaseQueryEndAuctionsRequest(): QueryEndAuctionsRequest {
+  return { pagination: undefined };
+}
+
+export const QueryEndAuctionsRequest = {
+  encode(message: QueryEndAuctionsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryEndAuctionsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryEndAuctionsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryEndAuctionsRequest {
+    return { pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined };
+  },
+
+  toJSON(message: QueryEndAuctionsRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined
+      && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryEndAuctionsRequest>, I>>(object: I): QueryEndAuctionsRequest {
+    const message = createBaseQueryEndAuctionsRequest();
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryEndAuctionsResponse(): QueryEndAuctionsResponse {
+  return { EndAuction: [], pagination: undefined };
+}
+
+export const QueryEndAuctionsResponse = {
+  encode(message: QueryEndAuctionsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.EndAuction) {
+      EndAuction.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryEndAuctionsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryEndAuctionsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.EndAuction.push(EndAuction.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryEndAuctionsResponse {
+    return {
+      EndAuction: Array.isArray(object?.EndAuction) ? object.EndAuction.map((e: any) => EndAuction.fromJSON(e)) : [],
+      pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
+    };
+  },
+
+  toJSON(message: QueryEndAuctionsResponse): unknown {
+    const obj: any = {};
+    if (message.EndAuction) {
+      obj.EndAuction = message.EndAuction.map((e) => e ? EndAuction.toJSON(e) : undefined);
+    } else {
+      obj.EndAuction = [];
+    }
+    message.pagination !== undefined
+      && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryEndAuctionsResponse>, I>>(object: I): QueryEndAuctionsResponse {
+    const message = createBaseQueryEndAuctionsResponse();
+    message.EndAuction = object.EndAuction?.map((e) => EndAuction.fromPartial(e)) || [];
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
   /** Queries a list of Auctions items. */
   Auctions(request: QueryAuctionsRequest): Promise<QueryAuctionsResponse>;
+  /** Queries a list of EndAuctions items. */
+  EndAuctions(request: QueryEndAuctionsRequest): Promise<QueryEndAuctionsResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -242,6 +369,7 @@ export class QueryClientImpl implements Query {
     this.rpc = rpc;
     this.Params = this.Params.bind(this);
     this.Auctions = this.Auctions.bind(this);
+    this.EndAuctions = this.EndAuctions.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -253,6 +381,12 @@ export class QueryClientImpl implements Query {
     const data = QueryAuctionsRequest.encode(request).finish();
     const promise = this.rpc.request("carauction.carauction.Query", "Auctions", data);
     return promise.then((data) => QueryAuctionsResponse.decode(new _m0.Reader(data)));
+  }
+
+  EndAuctions(request: QueryEndAuctionsRequest): Promise<QueryEndAuctionsResponse> {
+    const data = QueryEndAuctionsRequest.encode(request).finish();
+    const promise = this.rpc.request("carauction.carauction.Query", "EndAuctions", data);
+    return promise.then((data) => QueryEndAuctionsResponse.decode(new _m0.Reader(data)));
   }
 }
 

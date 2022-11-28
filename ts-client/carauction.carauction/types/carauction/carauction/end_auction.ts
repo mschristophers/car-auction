@@ -2,7 +2,7 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 
-export const protobufPackage = "auction.auction";
+export const protobufPackage = "carauction.carauction";
 
 export interface EndAuction {
   creator: string;

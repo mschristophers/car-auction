@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package auction.auction;
+package carauction.carauction;
 
 option go_package = "car-auction/x/carauction/types";
 
